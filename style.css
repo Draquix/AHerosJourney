@@ -1,1 +1,54 @@
-paste file here
+body {
+    color:red;
+    background-color:gray;
+}
+header h1 {
+    color:lavender;
+    text-shadow: 4px 4px 5px;
+}
+header, footer {
+    background-color:black;
+    color:red;
+    text-align:center;
+}
+h2 {
+    color:purple;
+}
+.float-container {
+    padding:20px;
+    height:200px;
+    margin-bottom: 20px;
+}
+.float-child {
+    width: 50%;
+    float:left;
+    height:200px;
+}
+#right-display {
+    background-color:darkgreen;
+    font-family: cursive;
+    color: white;
+}
+#left-display {
+    background-color:black;
+    font-family: monospace;
+    color:green;
+}
+#nav-menu {
+    text-align: center;
+    background-color:rgb(41, 58, 75);
+    color:magenta;
+    height:50px;
+    
+}
+#stats {
+    text-align:center;
+    font-family:sans-serif;
+    background-color:white;
+    color:black;
+}
+#inventory {
+    font-family:sans-serif;
+    background-color:black;
+    color:white;
+}
