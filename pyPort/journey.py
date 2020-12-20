@@ -1,55 +1,114 @@
 import rooms as r
 
-global location
-global index
-global move
 
 print("              A Hero's Journey        ")
 print("                   v.01")
 print("        written by Daniel Rogahn")
 print("")
 print("")
-index = 0
-def drawBox(string):
-    amt = len(string) + 4
-    print("*" * amt)
-    print("* " + string + " *")
-    print("*" * amt)
 
-def DisplayRoom(index):
-    drawBox(r.roomdata[index][0])
-    print(r.roomdata[index][1])
-    print(r.Navigation(index))
-    choice = input("What will you do?")
-    ProcessInput(choice)
+class World:
+    def __init__(self):
+        self.index = 0
+        self.rooms = []
+
+    def add_room(self,room):
+        self.rooms.append(room)
+
+    def walk(self,link):
+        self.index = link
+        self.rooms[Game.index].describe()
+        self.parser()
+
+    def realign(self):
+        a = input("press enter")
+        self.rooms[Game.index].describe()
+        self.parser()
 
 
-def ProcessInput(choice):
-    global move
-    print ("Now in Processing Function")
-    if choice == "north" or choice == "n" or choice == "North" or choice == "N":
-        if r.linkdata[index][0] > -1:
-            print("You go North.")
-            index = r.linkdata[index][0]
-            print(move)
-    if choice == "east" or choice == "e" or choice == "East" or choice == "E":
-        if r.linkdata[index][1] > -1:
-            print("You go East.")
-            index = r.linkdata[index][1]
-            print(move)
-    if choice == "South" or choice == "south" or choice == "S" or choice == "s":
-        if r.linkdata[index][2] > -1:
-            print("You go South.")
-            index = r.linkdata[index][2]
-            print(move)
-    if choice == "West" or choice == "west" or choice == "W" or choice == "w":
-        if r.linkdata[index][3] > -1:
-            print("You go West.")
-            index = r.linkdata[index][3]
-            print(move)
+    def parser(self):
+        cmd = input("What will you do?")
+        cmd = cmd.lower()
+        if cmd == "?":
+            print("Type the name of a direction to move through an exit to another room. Type 'get' followed by the name of the item to pick something up. You can 'peek' in a direction. In large areas that are searchable you can type 'search' to trigger an encounter.")
+        if cmd == "q" or cmd == "quit":
+            endGame()
+        if cmd == "east" or cmd == "e":
+            i = 0
+            while i < len(self.rooms[self.index].exits):
+                if "East" in self.rooms[self.index].exits[i].dir:
+                    print("You go East.")
+                    self.walk(self.rooms[self.index].exits[i].link)
+                i += 1
+        if cmd.lower() == "south" or cmd.lower() == "s":
+            i = 0
+            while i < len(self.rooms[self.index].exits):
+                if "South" in self.rooms[self.index].exits[i].dir:
+                    print("You go South.")
+                    self.walk(self.rooms[self.index].exits[i].link)
+                i += 1
+        if cmd.lower() == "west" or cmd.lower() == "w":
+            i = 0
+            while i < len(self.rooms[self.index].exits):
+                if "West" in self.rooms[self.index].exits[i].dir:
+                    print("You go West.")
+                    self.walk(self.rooms[self.index].exits[i].link)
+                i += 1
+        if cmd.lower() == "north" or cmd.lower() == "n":
+            i = 0
+            while i < len(self.rooms[self.index].exits):
+                if "North" in self.rooms[self.index].exits[i].dir:
+                    print("You go North.")
+                    self.walk(self.rooms[self.index].exits[i].link)
+                i += 1
+        if "look" in cmd.split():
+            tag = cmd.split("look ")
+            if "north" in tag[1]:
+                i = 0
+                while i < len(self.rooms[self.index].exits):
+                    if "North" in self.rooms[self.index].exits[i].dir:
+                        self.rooms[self.index].exits[i].lookpeek()
+                        self.realign()
+                    i += 1
+                self.realign()
+            if "east" in tag[1]:
+                i = 0
+                while i < len(self.rooms[self.index].exits):
+                    if "East" in self.rooms[self.index].exits[i].dir:
+                        self.rooms[self.index].exits[i].lookpeek()
+                        self.realign()
+                    i += 1
+                self.realign()
+            if "west" in tag[1]:
+                i = 0
+                while i < len(self.rooms[self.index].exits):
+                    if "West" in self.rooms[self.index].exits[i].dir:
+                        self.rooms[self.index].exits[i].lookpeek()
+                        self.realign()
+                    i += 1
+                self.realign()
+            if "south" in tag[1]:
+                i = 0
+                while i < len(self.rooms[self.index].exits):
+                    if "South" in self.rooms[self.index].exits[i].dir:
+                        self.rooms[self.index].exits[i].lookpeek()
+                        self.realign()
+                    i += 1
+                self.realign()
         else:
-            choice = input("Please enter a valid choice.")
-            ProcessInput(choice)
-    DisplayRoom(index)
+            print("Please enter a valid command (? for help")
+        self.realign()
 
-DisplayRoom(0)
+
+def endGame():
+    print("Thanks for playing!")
+      
+Game = World()
+Game.add_room(r.r0)
+Game.add_room(r.r1)
+Game.add_room(r.r2)
+Game.add_room(r.r3)
+Game.index = 0
+Game.rooms[Game.index].describe()
+Game.parser()
+
