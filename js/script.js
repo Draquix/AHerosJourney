@@ -64,7 +64,7 @@ function buy (shop,item){
     } else {
         alert("You can't afford this right now.");
     }
-    characterSheet();
+    Display(roomReturn);
 }
 function characterSheet(){
     var disp = Player.name+"'s Character Sheet<br>";

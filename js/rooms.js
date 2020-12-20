@@ -108,7 +108,7 @@ let rooms = [
         roomName: "The Main Street - In front of your House",
         searchable:false,
         store: -1,
-        roomDesc: "This street has very little activity. To the north is your residence and to the south is your neighbor, Fred, who is a hunter. The road runs east towards the town square and west towards Raiken Woods.",
+        roomDesc: "This street has very little activity. To the north is your residence and to the south is your neighbor, Fred, who is a hunter. The road runs west towards the town square and east towards Raiken Woods.",
         roomExits: [
             {
                 link:2,
