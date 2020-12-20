@@ -1,6 +1,5 @@
 //Global Variable Declarations
 var roomReturn = 0;
-var bM = "Battle is math.";
 
 //clearDisplay empties the page before the rewrites.
 function clearDisplay() {
@@ -145,54 +144,59 @@ function battleDisplay (){
     }
 }
 function pAttack(choice){
-    bM = "You attack the enemy with your "+Player.weapon+"...";
-    var toHit = Math.floor((Math.random() * 10) + Player.dex);
-    console.log('to hit is '+ toHit);
-    if (choice === 2){
-        toHit += Math.floor(Math.random() * Player.dex);
-        console.log("after precise its "+toHit);
-    }
-    var dodgeRoll = Math.floor((Math.random() * 10) + Enemy.def);
-    console.log ('Dodge roll is '+dodgeRoll);
-    if (toHit > dodgeRoll) {
-        bM += "and you hit!";
-        var damRoll = Math.floor((Math.random() * Player.str) + 1);
-        console.log("Damage roll was "+ damRoll);
-        if (choice === 1) {
-            damRoll +=Math.floor((Math.random() * Player.str) + 1);
-            console.log("Player aggressive adds to "+damRoll);
+    if (battleOn === true) {
+        bM = "You attack the enemy with your "+Player.weapon+"...";
+        var toHit = Math.floor((Math.random() * 10) + Player.dex);
+        console.log('to hit is '+ toHit);
+        if (choice === 2){
+            toHit += Math.floor(Math.random() * Player.dex);
+            console.log("after precise its "+toHit);
         }
-        bM += " You inflict "+damRoll+" points of damage.<br>";
-        Enemy.hp -= damRoll;
-        if (Enemy.hp < 1) {
-            battleOn = false;
-            Loot();
+        var dodgeRoll = Math.floor((Math.random() * 10) + Enemy.def);
+        console.log ('Dodge roll is '+dodgeRoll);
+        if (toHit > dodgeRoll) {
+            bM += "and you hit!";
+            var damRoll = Math.floor((Math.random() * Player.str) + 1);
+            console.log("Damage roll was "+ damRoll);
+            if (choice === 1) {
+                damRoll +=Math.floor((Math.random() * Player.str) + 1);
+                console.log("Player aggressive adds to "+damRoll);
+            }
+            bM += " You inflict "+damRoll+" points of damage.<br>";
+            Enemy.hp -= damRoll;
+            if (Enemy.hp < 1) {
+                console.log("claiming enemy.hp < 1")
+                battleOn = false;
+                Loot();
+            }
+        } else {
+            bM += "but unfortunately you miss. <br>";
         }
-    } else {
-        bM += "but unfortunately you miss. <br>";
     }
-    document.getElementById('left-display').innerHTML = bM;
-    var hitYou = Math.floor((Math.random() * 10) + Enemy.dex);
-    bM += "The enemy attacks... ";
-    var defRoll = Math.floor((Math.random() * 10) + Player.def);
-    console.log("enemy hitroll is "+hitYou+" and your defRoll is "+ defRoll);
-    if (choice === 3){
-        defRoll += Math.floor((Math.random() * Player.def) + 1);
-        console.log("defensive move brings up to "+defRoll);
-    }
-    if (hitYou > defRoll){
-        var damRoll = Math.floor((Math.random() * Enemy.str) + 1);
-        bM += "and hits you for "+damRoll+" points of damage!<br>";
+    if (battleOn === true){
         document.getElementById('left-display').innerHTML = bM;
-        Player.hp -= damRoll;
-        if (Player.hp < 1){
-            alert('you lost the game');
+        var hitYou = Math.floor((Math.random() * 10) + Enemy.dex);
+        bM += "The enemy attacks... ";
+        var defRoll = Math.floor((Math.random() * 10) + Player.def);
+        console.log("enemy hitroll is "+hitYou+" and your defRoll is "+ defRoll);
+        if (choice === 3){
+            defRoll += Math.floor((Math.random() * Player.def) + 1);
+            console.log("defensive move brings up to "+defRoll);
         }
-    } else {
-        bM += "but it misses you.<br>";
+        if (hitYou > defRoll){
+            var damRoll = Math.floor((Math.random() * Enemy.str) + 1);
+            bM += "and hits you for "+damRoll+" points of damage!<br>";
+            document.getElementById('left-display').innerHTML = bM;
+            Player.hp -= damRoll;
+            if (Player.hp < 1){
+                alert('you lost the game');
+            }
+        } else {
+            bM += "but it misses you.<br>";
+        }
+        document.getElementById('left-display').innerHTML = bM;
+        battleDisplay();
     }
-    document.getElementById('left-display').innerHTML = bM;
-    battleDisplay();
 }
 function runAway (){
     alert("You flee the battle...");
@@ -200,7 +204,7 @@ function runAway (){
     Display(roomReturn);
 }
 function Loot(){
-    alert("You have defeated the "+Enemy.name+"! You loot "+Enemy.coins+" and gain "+Enemy.xp+" experience points.");
+    alert("You have defeated the "+Enemy.name+"! You loot "+Enemy.coins+" coins, and gain "+Enemy.xp+" experience points.");
     Player.coins += Enemy.coins;
     Player.xp += Enemy.xp;
     if (isCoyote === true) {
@@ -221,6 +225,9 @@ function Loot(){
         Player.str ++;
         Player.maxHp = Math.floor(Player.maxHp * 1.5);
     }
+    battleOn = false;
+    console.log("it gets this far, right before clearDisplay and Display and battleOn =" + battleOn);
+    clearDisplay();
     Display(roomReturn);
 }
 Display(0);

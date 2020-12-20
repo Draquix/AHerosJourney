@@ -9,6 +9,7 @@ var coyoteQuest = false;
 var coyoteCount = 0;
 var isCoyote = false;
 var deeperSwitch = false;
+var bM;
 /*The rooms array contains the display data of the various rooms in the
 game, such as the room name, it's description, and it's exits. */
 let rooms = [
@@ -160,7 +161,7 @@ let rooms = [
         roomName: "Raiken Woods",
         searchable: true,
         store: -1,
-        roomDesc: "This thick copse of oak trees is home to many forms of wildlife. It is a favorite spot for hunters, as rabbits and deer are plentiful here. Lately a pack of dangerous coyotes have moved in, hassling both the game and the hunters. You can search around if you wish to encounter anything. You have explored here "+woodsExplore+" times.",
+        roomDesc: "This thick copse of oak trees is home to many forms of wildlife. It is a favorite spot for hunters, as rabbits and deer are plentiful here. Lately a pack of dangerous coyotes have moved in, hassling both the game and the hunters. You can search around if you wish to encounter anything.",
         roomExits: [
             {
                 link:6,
@@ -192,7 +193,7 @@ let rooms = [
                 alert("A dangerous jackalope rushes out of the trees! Basically it's a bunny with antlers and sharp teeth. Prepare to fight!");
                 Enemy = new Monster("jackalope", 9, 2, 2, 2, 4, 9, 4);
                 console.log("Enemy created...");
-                var bM = "The "+Enemy.name+" looks at you menacingly, giving you a chance to attack first!";
+                bM = "The "+Enemy.name+" looks at you menacingly, giving you a chance to attack first!";
                 battleOn = true;
                 battleDisplay();
             }
@@ -201,7 +202,7 @@ let rooms = [
                 Enemy = new Monster("coyote", 11, 3, 3, 3, 5, 12, 6);
                 isCoyote = true;
                 console.log("Enemy generated");
-                var bM = "The "+Enemy.name+" looks at you menacingly, giving you a chance to attack first!";
+                bM = "The "+Enemy.name+" looks at you menacingly, giving you a chance to attack first!";
                 battleOn = true;
                 battleDisplay();
             }
