@@ -33,9 +33,6 @@ class Player:
     def add_toInventory(self,item):
         self.inventory.append(item)
 
-    
-
-
     def characterSheet(self):
         print(self.name+ "   ||  Level: "+str(self.lvl)+ " || Experience: "+str(self.xp)+ " of "+str(self.tNL))
         print("    Hitpoints: "+str(self.hp)+" of "+str(self.maxHp)+"  ||  Mana: "+str(self.mp)+" of "+str(self.maxMp) )
@@ -75,12 +72,31 @@ class World:
         self.parser()
 
     def get_item(self,ind):
-        self.people[0].add_toInventory(self.rooms[self.index].items[ind])
-        self.rooms[self.index].items.pop(ind)
+        if self.rooms[self.index].items[ind].mobile == True: 
+            self.people[0].add_toInventory(self.rooms[self.index].items[ind])
+            self.rooms[self.index].items.pop(ind)
+        else:
+            print("That cannot be picked up or moved.")
+        
 
     def drop_item(self,ind):
         self.rooms[self.index].add_item(self.people[0].inventory[ind])
         self.people[0].inventory.pop(ind)
+
+    def use(self,item):
+        if self.people[0].inventory[item].iskey == True:
+            i = 0
+            while i < len(self.rooms[self.index].items):
+                if self.people[0].inventory[item].locki == self.rooms[self.index].items[item].locki:
+                    if self.rooms[self.index].items[item].isopen == False:
+                        self.rooms[self.index].items[item].isopen = True
+                        print("You turn the key and unlock it.")
+                        self.realign()
+                    else:
+                        print("It's already unlocked.")
+                        self.realign()
+                i += 1
+            self.realign()
 
     def parser(self):
         cmd = input("What will you do?")
@@ -142,6 +158,25 @@ class World:
                 if tag[1] in self.people[0].inventory[i].ident:
                     self.drop_item(i)
                     self.realign()
+                i += 1
+        # 'use' command
+        if "use" in cmd.split():
+            tag = cmd.split("use ")
+            i = 0
+            while i < len(self.people[0].inventory):
+                if tag[1] in self.people[0].inventory[i].ident:
+                    self.use(i)
+                    self.realign()
+                i += 1
+        # 'loot' command
+        if "loot" in cmd.split():
+            i = 0
+            while i < len(self.rooms[self.index].items):
+                if self.rooms[self.index].items[i].isopen == True:
+                    x = 0
+                    while len(self.rooms[self.index].items[i].contains) > 0:
+                        self.rooms[self.index].add_item(self.rooms[self.index].items[i].contains[0])
+                        self.rooms[self.index].items[x].contains.pop(0)
                 i += 1
         # 'look' command
         if cmd == "look":
@@ -210,7 +245,6 @@ class World:
                     self.rooms[self.index].npcs[i].onQuest()
                     self.realign()
                 i += 1
-        
         else:
             print("Please enter a valid command (? for help")
         self.realign()

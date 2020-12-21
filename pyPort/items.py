@@ -20,6 +20,8 @@ class Item:
 
     def add_contents(self,item):
         self.contains.append(item)
+    
+         
 
 
 i0 = Item("apple", "Shiny Red Apple", "A shiny bright red apple that looks good to eat. Food aids in healing.", True)
@@ -39,7 +41,7 @@ i3 = Item("wooden", "Wooden Sword", "It's not meant to inflict much more damage 
 i3.equipSlot = 2
 i3.DC = 1
 
-i4 = Item("chest", "War Chest", "Your father was a soldier long ago... This chest holds some of his belongings.", False)
+i4 = Item("chest", "War Chest", "Your father was a soldier long ago... This chest holds some of his belongings. If it was open you could 'loot' it.", False)
 i4.locki = 1234
 i4.add_contents(i2)
 i4.add_contents(i3)

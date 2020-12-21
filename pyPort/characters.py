@@ -14,7 +14,7 @@ class NPC:
 
     def onQuest(self):
         if self.questdone == False:
-            print(self.questsdesc)
+            print(self.questdesc)
         if self.questdone == True:
             print(self.name + " doesn't require anything else of you.")
 

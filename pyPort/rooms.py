@@ -31,6 +31,8 @@ class Room:
             i = 0
             while i < len(self.items):
                 print("A "+self.items[i].name+" is here.")
+                if self.items[i].isopen == True:
+                    print("It is open... you can 'loot' it.")
                 i += 1        
         if len(self.npcs) > 0:
             i = 0
