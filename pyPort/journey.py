@@ -95,6 +95,12 @@ class World:
                         self.realign()
                     i += 1
                 self.realign()
+            i = 0
+            while i < len(self.rooms[self.index].items):
+                if tag[1] in self.rooms[self.index].items[i].ident:
+                    self.rooms[self.index].items[i].examine()
+                    self.realign()
+                i += 1
         else:
             print("Please enter a valid command (? for help")
         self.realign()
@@ -108,6 +114,8 @@ Game.add_room(r.r0)
 Game.add_room(r.r1)
 Game.add_room(r.r2)
 Game.add_room(r.r3)
+Game.add_room(r.r4)
+Game.add_room(r.r5)
 Game.index = 0
 Game.rooms[Game.index].describe()
 Game.parser()
