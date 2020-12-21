@@ -1,4 +1,5 @@
 import items as it
+import characters as ch
 
 def drawBox(string):
     amt = len(string) + 4
@@ -20,6 +21,9 @@ class Room:
     def add_item(self,item):
         self.items.append(item)
 
+    def add_npc(self,npc):
+        self.npcs.append(npc)
+
     def describe(self):
         drawBox(self.name)
         print(self.description)
@@ -28,6 +32,11 @@ class Room:
             while i < len(self.items):
                 print("A "+self.items[i].name+" is here.")
                 i += 1        
+        if len(self.npcs) > 0:
+            i = 0
+            while i < len(self.npcs):
+                print(self.npcs[i].name+" stands here.")
+                i += 1
         nav ="Exits: "
         i = 0
         while i < len(self.exits):
@@ -67,6 +76,7 @@ r2.add_exit(r2e2)
 r2.add_exit(r2e3)
 r2.add_exit(r2e4)
 r3 = Room("Yard - Goat Pen", "Enclosed in a wooden fence is a patch of ground that is home to your two goats, Emmie and Mealy. They bleet happily to see you and nose at your hand looking to get pet, or perhaps just seeing if you have food for them.")
+r3.add_npc(ch.npc1)
 r3e1 = Exit("West", 2, "Yard")
 r3.add_exit(r3e1)
 r4 = Room("Yard - Garden", "A silly scarecrow stands in the center of the patch of soil and several rows of vegetables grow here. The weeds are starting to encroach upon the crops... To the north stands your small toolshed, and to the east is the rest of your yard.")
