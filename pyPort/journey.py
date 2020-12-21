@@ -1,4 +1,6 @@
 import rooms as r
+import items as it
+
 
 print("              A Hero's Journey        ")
 print("                   v.01")
@@ -28,6 +30,12 @@ class Player:
         self.equip3 = False
         self.accessory = "Nothing"
 
+    def add_toInventory(self,item):
+        self.inventory.append(item)
+
+    
+
+
     def characterSheet(self):
         print(self.name+ "   ||  Level: "+str(self.lvl)+ " || Experience: "+str(self.xp)+ " of "+str(self.tNL))
         print("    Hitpoints: "+str(self.hp)+" of "+str(self.maxHp)+"  ||  Mana: "+str(self.mp)+" of "+str(self.maxMp) )
@@ -35,7 +43,7 @@ class Player:
         print("Wearing "+self.armor+", and wielding "+self.weapon+", and using "+self.accessory+"  with:")
         print(str(self.coins)+" coins in your purse.")
 
-    def inventoryList(self):
+    def inventoryList(self,):
         print("Wearing "+self.armor+", and wielding "+self.weapon+", and using "+self.accessory+"  with:")
         print(str(self.coins)+" coins in your purse.")
         print("You are carrying:")
@@ -66,6 +74,13 @@ class World:
         self.rooms[Game.index].describe()
         self.parser()
 
+    def get_item(self,ind):
+        self.people[0].add_toInventory(self.rooms[self.index].items[ind])
+        self.rooms[self.index].items.pop(ind)
+
+    def drop_item(self,ind):
+        self.rooms[self.index].add_item(self.people[0].inventory[ind])
+        self.people[0].inventory.pop(ind)
 
     def parser(self):
         cmd = input("What will you do?")
@@ -110,7 +125,27 @@ class World:
                     print("You go North.")
                     self.walk(self.rooms[self.index].exits[i].link)
                 i += 1
+        # 'take' command
+        if "take" in cmd.split():
+            tag = cmd.split("take ")
+            i = 0
+            while i < len(self.rooms[self.index].items):
+                if tag[1] in self.rooms[self.index].items[i].ident:
+                    self.get_item(i)
+                    self.realign()
+                i += 1
+        # 'drop' command    
+        if "drop" in cmd.split():
+            tag = cmd.split("drop ")
+            i = 0
+            while i < len(self.people[0].inventory):
+                if tag[1] in self.people[0].inventory[i].ident:
+                    self.drop_item(i)
+                    self.realign()
+                i += 1
         # 'look' command
+        if cmd == "look":
+            self.realign()
         if "look" in cmd.split():
             tag = cmd.split("look ")
             if "north" in tag[1]:
