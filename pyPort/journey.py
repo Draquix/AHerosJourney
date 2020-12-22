@@ -1,12 +1,16 @@
 import rooms as r
 import items as it
+import random
 
+a = random.randint(1,10)
+print(str(a))
 
 print("              A Hero's Journey        ")
 print("                   v.01")
 print("        written by Daniel Rogahn")
 print("")
 print("")
+
 
 class Player:
     def __init__(self):
@@ -24,11 +28,14 @@ class Player:
         self.defense = 3
         self.inventory = []
         self.equip1 = False
-        self.weapon = "your Fists"
-        self.equip2 = False
         self.armor = "Clothes"
+        self.armorSlot = []
+        self.equip2 = False
+        self.weapon = "Fists"
+        self.weaponSlot = []
         self.equip3 = False
         self.accessory = "Nothing"
+        self.accessorySlot = []
 
     def add_toInventory(self,item):
         self.inventory.append(item)
@@ -40,7 +47,7 @@ class Player:
         print("Wearing "+self.armor+", and wielding "+self.weapon+", and using "+self.accessory+"  with:")
         print(str(self.coins)+" coins in your purse.")
 
-    def inventoryList(self,):
+    def inventoryList(self):
         print("Wearing "+self.armor+", and wielding "+self.weapon+", and using "+self.accessory+"  with:")
         print(str(self.coins)+" coins in your purse.")
         print("You are carrying:")
@@ -48,6 +55,9 @@ class Player:
         while i < len(self.inventory):
             print(self.inventory[i].name)
             i += 1
+
+    def equipArmor(self,armor):
+        self.armorSlot.append(armor)
            
 class World:
     def __init__(self):
@@ -83,7 +93,9 @@ class World:
         self.rooms[self.index].add_item(self.people[0].inventory[ind])
         self.people[0].inventory.pop(ind)
 
+    # item use method
     def use(self,item):
+        #use of key
         if self.people[0].inventory[item].iskey == True:
             i = 0
             while i < len(self.rooms[self.index].items):
@@ -97,6 +109,39 @@ class World:
                         self.realign()
                 i += 1
             self.realign()
+        #using consumable 
+        if self.people[0].inventory[item].consumable == True:
+            heal = random.randint(self.people[0].inventory[item].lowH, self.people[0].inventory[item].highH)
+            print("You eat the "+self.people[0].inventory[item].ident+" and gain back "+str(heal)+" health points.")
+            self.people[0].hp += heal
+            if self.people[0].hp > self.people[0].maxHp:
+                self.people[0].hp = self.people[0].maxHp
+            self.people[0].inventory.pop(item)
+            self.realign()
+        # trying to 'use' armor, weapon, or accessory
+        if self.people[0].inventory[item].equipSlot == 1:
+            print("You can't exactly 'use' armor, perhaps 'wear' it?")
+            self.realign()
+        if self.people[0].inventory[item].equipSlot == 2:
+            print("Rather than try to 'use' a weapon, you must 'wield' it...")
+            self.realign()
+
+    def wear(self, item):
+        if len(self.people[0].armorSlot) == 0:
+            if self.people[0].inventory[item].equipSlot == 1:
+                self.people[0].defense += self.people[0].inventory[item].AC
+                self.people[0].armor = self.people[0].inventory[item].name
+                self.people[0].equipArmor(self.people[0].inventory[item])
+                print("You wear the "+self.people[0].inventory[item].name+".")
+                self.people[0].inventory.pop(item)
+                self.realign()
+            else:
+                print("That's not a piece of armor, you can't wear it.")
+                self.realign()
+        else:
+            print("You're already wearing some armor, you should 'remove' it.")
+            self.realign()
+
 
     def parser(self):
         cmd = input("What will you do?")
@@ -166,6 +211,15 @@ class World:
             while i < len(self.people[0].inventory):
                 if tag[1] in self.people[0].inventory[i].ident:
                     self.use(i)
+                    self.realign()
+                i += 1
+        # 'wear' command
+        if "wear" in cmd.split():
+            tag = cmd.split("wear ")
+            i = 0
+            while i < len(self.people[0].inventory):
+                if tag[1] in self.people[0].inventory[i].ident:
+                    self.wear(i)
                     self.realign()
                 i += 1
         # 'loot' command
