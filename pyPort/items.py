@@ -14,6 +14,9 @@ class Item:
         self.highH = 0
         self.equipSlot = 0
         self.AC = 0
+        self.DC = 0
+        self.questref = 0
+        self.quantity = 1
 
     def examine(self):
         print("You examine the "+self.ident+": "+self.desc)
@@ -45,5 +48,16 @@ i4 = Item("chest", "War Chest", "Your father was a soldier long ago... This ches
 i4.locki = 1234
 i4.add_contents(i2)
 i4.add_contents(i3)
-i5 = Item("garden", "Your Vegetable Garden", "You grow potatos, zucchini, carrots, and brocolli. All sorts of healthy peasant food.", False)
 
+i5 = Item("vegetables", "Fresh Vegetables", "There's two carrots, a zucchini, and a potato... with some meat and milk it'd make a good stew.",True) 
+
+i6 = Item("garden", "Your Vegetable Garden", "You grow potatos, zucchini, carrots, and brocolli. All sorts of healthy peasant food.", False)
+i6.locki = 666
+i6.add_contents(i5)
+
+i7 = Item("rake", "Garden Rake", "A long pole with metal tines at the end, used for gardening.", True)
+i7.iskey = True
+i7.locki = 666
+
+i8 = Item("pail", "Milk Pail", "A metal bucket you use for milking the goats.", True)
+i8.questref = 42

@@ -58,6 +58,9 @@ class Player:
 
     def equipArmor(self,armor):
         self.armorSlot.append(armor)
+
+    def equipWeapon(self, weapon):
+        self.weaponSlot.append(weapon)
            
 class World:
     def __init__(self):
@@ -125,7 +128,7 @@ class World:
         if self.people[0].inventory[item].equipSlot == 2:
             print("Rather than try to 'use' a weapon, you must 'wield' it...")
             self.realign()
-
+# wear armor
     def wear(self, item):
         if len(self.people[0].armorSlot) == 0:
             if self.people[0].inventory[item].equipSlot == 1:
@@ -141,7 +144,20 @@ class World:
         else:
             print("You're already wearing some armor, you should 'remove' it.")
             self.realign()
-
+#wield weapon
+    def wield(self, item):
+        if len(self.people[0].weaponSlot) == 0:
+            if self.people[0].inventory[item].equipSlot == 2:
+                self.people[0].strength += self.people[0].inventory[item].DC
+                self.people[0].weapon = self.people[0].inventory[item].name
+                self.people[0].equipWeapon(self.people[0].inventory[item])
+                print("You wield the "+self.people[0].inventory[item].name+".")
+                self.people[0].inventory.pop(item)
+                self.realign()
+            else:
+                print("That's not a weapon, so you can't very well wield it.")
+        else:
+            print("You already have a weapon wielded. You should 'disarm' it before wielding another.")
 
     def parser(self):
         cmd = input("What will you do?")
@@ -222,6 +238,15 @@ class World:
                     self.wear(i)
                     self.realign()
                 i += 1
+        # 'wield' command
+        if "wield" in cmd.split():
+            tag = cmd.split("wield ")
+            i = 0
+            while i < len(self.people[0].inventory):
+                if tag[1] in self.people[0].inventory[i].ident:
+                    self.wield(i)
+                    self.realign()
+                i += 1
         # 'loot' command
         if "loot" in cmd.split():
             i = 0
@@ -231,6 +256,7 @@ class World:
                     while len(self.rooms[self.index].items[i].contains) > 0:
                         self.rooms[self.index].add_item(self.rooms[self.index].items[i].contains[0])
                         self.rooms[self.index].items[x].contains.pop(0)
+                        self.realign()
                 i += 1
         # 'look' command
         if cmd == "look":
@@ -282,6 +308,9 @@ class World:
                     self.realign()
                 i += 1
         # 'talk' command
+        if cmd == "talk":
+            print("Who do you want to talk to?")
+            self.realign()
         if "talk" in cmd.split():
             tag = cmd.split("talk ")
             i = 0
@@ -291,6 +320,9 @@ class World:
                     self.realign()
                 i += 1
         # 'quest' command
+        if cmd == "quest":
+            print("Quest who? Be more specific and name the NPC.")
+            self.realign()
         if "quest" in cmd.split():
             tag = cmd.split("quest ")
             i = 0
@@ -314,6 +346,10 @@ Game.add_room(r.r2)
 Game.add_room(r.r3)
 Game.add_room(r.r4)
 Game.add_room(r.r5)
+Game.add_room(r.r6)
+Game.add_room(r.r7)
+Game.add_room(r.r8)
+Game.add_room(r.r9)
 Game.index = 0
 Game.rooms[Game.index].describe()
 Game.parser()
