@@ -72,3 +72,8 @@ i9.highH = 8
 
 i10 = Item("arrow", "Fred's lost arrow", "It's a straight willow shaft with feathers on one end and an iron point on the other. It looks like the ones Fred uses.", True)
 i10.questref = 111
+
+i11 = Item("jerky","Deer Jerky", "This aged and dried meat has a smokey flavor and a sweet taste. You buy it often from Fred as you're neighbors.", True)
+i11.consumable = True
+i11.lowH = 7
+i11.highH = 12

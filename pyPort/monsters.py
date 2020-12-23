@@ -11,6 +11,17 @@ class Enemy:
         self.coinH = coinH
         self.hostile = True
 
+    def reInit(self, name, desc, hp, strength, dexterity, defense, exp, coinL, coinH):
+        self.name = name
+        self.desc = desc
+        self.hp = hp
+        self.strength = strength
+        self.dexterity = dexterity
+        self.defense = defense
+        self.exp = exp
+        self.coinL = coinL
+        self.coinH = coinH
+
     def lookAt(self):
         print(self.desc)
         if self.hostile == True:

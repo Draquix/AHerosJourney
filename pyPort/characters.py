@@ -10,6 +10,7 @@ class NPC:
         self.reward = []
         self.questref = 0
         self.questamt = 1
+        self.questCount = 0
         self.hostile = False
 
     def add_item(self, item):
@@ -39,6 +40,6 @@ npc1.add_item(it.i9)
 npc2 = NPC("Fred", "Fred wears dark brown leathers, and a green cloak. He has red hair and a big bushy beard.")
 npc2.questdesc = "I need some arrows... find me four, and I'll give you some deer jerky."
 npc2.dialogue = "There's been a lot of coyotes in the woods lately, I keep getting attacked to the point that I've shot all my arrows!"
-npc2.questref = 420
+npc2.questref = 111
 npc2.questamt = 4
-
+npc2.add_item(it.i11)

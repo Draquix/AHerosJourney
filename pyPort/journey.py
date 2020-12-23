@@ -129,15 +129,19 @@ class World:
         #using a quest item
         if item.questref > 0:
             if len(self.rooms[self.index].npcs) > 0:
-                if item.questref == self.rooms[self.index].npcs[0].questref and item.quantity == self.rooms[self.index].npcs[0].questamt:
-                    msg = "You give the "+item.name+" to "
-                    msg += self.rooms[self.index].npcs[0].name+", and in exchange they give you the "+self.rooms[self.index].npcs[0].reward[0].name+"." 
-                    self.people[0].add_toInventory(self.rooms[self.index].npcs[0].reward[0])
-                    self.rooms[self.index].npcs[0].reward.pop(0)
-                    self.people[0].inventory.pop(ind)
-                    self.rooms[self.index].npcs[0].questdone = True
+                if item.questref == self.rooms[self.index].npcs[0].questref: 
+                    self.rooms[self.index].npcs[0].questCount += 1
+                    msg = "You give the "+item.name+" to "+self.rooms[self.index].npcs[0].name
+                    msg += "That's "+str(self.rooms[self.index].npcs[0].questCount)+" so far and they need "+str(self.rooms[self.index].npcs[0].questamt)
                     print(msg)
-                    self.realign()
+                    if self.rooms[self.index].npcs[0].questamt == self.rooms[self.index].npcs[0].questCount:
+                        msg = "You give the "+item.name+" to "+self.rooms[self.index].npcs[0].name
+                        msg += self.rooms[self.index].npcs[0].name+", and in exchange they give you the "+self.rooms[self.index].npcs[0].reward[0].name+"." 
+                        self.people[0].add_toInventory(self.rooms[self.index].npcs[0].reward[0])
+                        self.rooms[self.index].npcs[0].reward.pop(0)
+                        self.rooms[self.index].npcs[0].questdone = True
+                        print(msg)
+                        self.realign()
                 else:
                     print("This item is used in a different quest...")
                     self.realign()
@@ -339,13 +343,9 @@ class World:
             i = 0
             while i < len(self.rooms[self.index].npcs):
                 if tag[1] in self.rooms[self.index].npcs[i].name.lower():
-                    x = 0
-                    while x < len(self.people[0].inventory):
-                        if self.people[0].inventory[x].questref == self.rooms[self.index].npcs[i].questref:
-                            self.use(self.people[0].inventory[x] , x)
-                    self.rooms[self.index].npcs[i].onQuest()
+                    self.rooms[self.index].npcs[0].onQuest()
                     self.realign()
-                i += 1
+            i += 1
         # 'search command
         if cmd == "search":
             if self.rooms[self.index].searchable == True:
@@ -355,7 +355,7 @@ class World:
         if cmd == "attack" and self.rooms[self.index].npcs[0].hostile == True:
             print("You attack aggressively by default, but you can also reposte to be defensive, or strike to be more precise.")     
             self.Attack(1)
-        if cmd == "reposte" and self.rooms[self.index].npcs[0].hostile == True:
+        if cmd == "riposte" and self.rooms[self.index].npcs[0].hostile == True:
             print("When reposting you dodge roughly twice as well when the enemy strikes back.")
             self.Attack(2)
         if cmd == "strike" and self.rooms[self.index].npcs[0].hostile == True:
@@ -364,7 +364,7 @@ class World:
         else:
             print("Please enter a valid command (? for help")
         self.realign()
-
+#Processes your attack and their hit back.
     def Attack(self, selector):
         msg = "You swing your "+self.people[0].weapon+" at your opponent and..."
         hitroll = random.randint(1,10)+random.randint(0, self.people[0].dexterity)
@@ -399,7 +399,7 @@ class World:
         if self.people[0].hp < 1:
             print("YOU DIED!! Try again some time.")
             endGame()
-
+#After battle, spoils of victory and popping out dead enemy object
     def battleRewards(self):
         self.people[0].xp += self.rooms[self.index].npcs[0].exp
         msg = "You gained "+str(self.rooms[self.index].npcs[0].exp)+" experience points, and "
@@ -407,9 +407,21 @@ class World:
         self.people[0].coins += coin
         msg += str(coin)+ "coins from the battle."
         print(msg)
+        if self.people[0].xp >= self.people[0].tNL:
+            self.people[0].tNL = self.people[0].tNL*2.6
+            self.people[0].lvl += 1
+            self.people[0].dexterity += 1
+            self.people[0].strength += 1
+            self.people[0].defense += 1
+        self.mobRefresh(self.rooms[self.index].npcs[0].name)
         self.rooms[self.index].npcs.pop(0)
         self.realign()
 
+    def mobRefresh(self,name):
+        if name == "Coyote":
+            mobs.coyote.hp = 9
+        if name == "Jackalope":
+            mobs.jack.hp = 7
 #Searching area event handlers...
     def goSearch(self, searchI):
         #search possibilities for Raiken Woods
