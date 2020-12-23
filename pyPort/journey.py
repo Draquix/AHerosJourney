@@ -1,6 +1,7 @@
 import rooms as r
 import items as it
 import random
+import monsters as mobs
 
 a = random.randint(1,10)
 print(str(a))
@@ -67,7 +68,6 @@ class World:
         self.index = 0
         self.rooms = []
         self.people = []
-
     def add_room(self,room):
         self.rooms.append(room)
 
@@ -109,8 +109,7 @@ class World:
                         self.rooms[self.index].items[i].contains.pop(0)  
                 i += 1
             print(msg)
-            self.realign()
-                    
+            self.realign()              
         #using consumable 
         if item.consumable == True:
             heal = random.randint(item.lowH, item.highH)
@@ -130,12 +129,12 @@ class World:
         #using a quest item
         if item.questref > 0:
             if len(self.rooms[self.index].npcs) > 0:
-                if item.questref == self.rooms[self.index].npcs[0].questref:
-                    print("!!!Made into the If") 
+                if item.questref == self.rooms[self.index].npcs[0].questref and item.quantity == self.rooms[self.index].npcs[0].questamt:
                     msg = "You give the "+item.name+" to "
                     msg += self.rooms[self.index].npcs[0].name+", and in exchange they give you the "+self.rooms[self.index].npcs[0].reward[0].name+"." 
                     self.people[0].add_toInventory(self.rooms[self.index].npcs[0].reward[0])
                     self.rooms[self.index].npcs[0].reward.pop(0)
+                    self.people[0].inventory.pop(ind)
                     self.rooms[self.index].npcs[0].questdone = True
                     print(msg)
                     self.realign()
@@ -347,10 +346,98 @@ class World:
                     self.rooms[self.index].npcs[i].onQuest()
                     self.realign()
                 i += 1
+        # 'search command
+        if cmd == "search":
+            if self.rooms[self.index].searchable == True:
+                self.goSearch(self.rooms[self.index].searchI)
+            else:
+                print("You find nothing more than you saw upon first entering...")  
+        if cmd == "attack" and self.rooms[self.index].npcs[0].hostile == True:
+            print("You attack aggressively by default, but you can also reposte to be defensive, or strike to be more precise.")     
+            self.Attack(1)
+        if cmd == "reposte" and self.rooms[self.index].npcs[0].hostile == True:
+            print("When reposting you dodge roughly twice as well when the enemy strikes back.")
+            self.Attack(2)
+        if cmd == "strike" and self.rooms[self.index].npcs[0].hostile == True:
+            print("You sacrifice a little power, and defensive abilty to strike with precision to be twice as likely to hit.")
+            self.Attack(3) 
         else:
             print("Please enter a valid command (? for help")
         self.realign()
 
+    def Attack(self, selector):
+        msg = "You swing your "+self.people[0].weapon+" at your opponent and..."
+        hitroll = random.randint(1,10)+random.randint(0, self.people[0].dexterity)
+        dodgeroll = random.randint(1,10)+random.randint(0, self.rooms[self.index].npcs[0].defense)
+        if selector == 3:
+            hitroll += random.randint(0, self.people[0].dexterity)
+        if hitroll > dodgeroll:
+            damroll = random.randint(1,self.people[0].strength)
+            if selector == 1:
+                damroll += random.randint(1,self.people[0].strength)
+            msg += "and you hit the enemy doing "+str(damroll)+" points of damage."
+            self.rooms[self.index].npcs[0].hp -= damroll
+            if self.rooms[self.index].npcs[0].hp < 1:
+                print("You have defeated your opponent.")
+                self.battleRewards()
+        else:
+            msg+= "you missed."
+        print(msg)
+        msg = "The "+self.rooms[self.index].npcs[0].name+" attacks you!  "
+        hitroll = random.randint(1,10)+ random.randint(0,self.rooms[self.index].npcs[0].dexterity) 
+        dodgeroll = random.randint(1,10)+random.randint(0, self.people[0].defense)
+        if selector == 2:
+            dodgeroll += random.randint(0, self.people[0].defense)
+        if hitroll > dodgeroll:
+            damroll = random.randint(1, self.rooms[self.index].npcs[0].strength)
+            msg += "It hits you for "+str(damroll)+" points of damage."
+            self.people[0].hp -= damroll
+        else:
+            msg += "..but it missed."
+        print(msg)
+        
+        if self.people[0].hp < 1:
+            print("YOU DIED!! Try again some time.")
+            endGame()
+
+    def battleRewards(self):
+        self.people[0].xp += self.rooms[self.index].npcs[0].exp
+        msg = "You gained "+str(self.rooms[self.index].npcs[0].exp)+" experience points, and "
+        coin = random.randint(self.rooms[self.index].npcs[0].coinL,self.rooms[self.index].npcs[0].coinH)
+        self.people[0].coins += coin
+        msg += str(coin)+ "coins from the battle."
+        print(msg)
+        self.rooms[self.index].npcs.pop(0)
+        self.realign()
+
+#Searching area event handlers...
+    def goSearch(self, searchI):
+        #search possibilities for Raiken Woods
+        if searchI == 1:
+            enc = random.randint(1,5)
+            self.rooms[self.index].searchCount += 1
+            if enc == 1:
+                fate = random.randint(1,3)
+                print("You look about in the forest, searching for anything useful, or anything dangerous. You stumble and trip on a root...")
+                if fate == 2:
+                    print("You land against a chunk of stone causing a bruise and doing 1 point of damage.")
+                    self.people[0].hp -= 1
+                else:
+                    print("But the undergrowth and fallen leaves cushion your landing.")
+            if enc == 2:
+                self.rooms[self.index].add_item(it.i10)
+                print("As you follow a path throught the woods you come across an arrow stuck in a tree.")
+            if enc == 3:
+                print("A bush rustles, and then you hear the terrible chatter as the antlers hop into view. It's a jackalope!")
+                self.rooms[self.index].add_npc(mobs.jack)
+            if enc == 4:
+                print("A mangy, hungry looking coyote slinks closer and growls at you.")
+                self.rooms[self.index].add_npc(mobs.coyote)
+            if enc == 5:
+                print("A forest faery flits by on gossamer wings, and taps you on the shoulder, imbuing you with a little more health.")
+                self.people[0].hp += 1
+        self.realign()
+   
 playerName = input("What is your name?:")
 You = Player()
 You.name = playerName

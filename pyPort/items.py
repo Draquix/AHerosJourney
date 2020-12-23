@@ -69,3 +69,6 @@ i9 = Item("milk", "Goat's Milk", "Nice and fresh, still a bit warm. Yummy goat's
 i9.consumable = True
 i9.lowH = 5
 i9.highH = 8
+
+i10 = Item("arrow", "Fred's lost arrow", "It's a straight willow shaft with feathers on one end and an iron point on the other. It looks like the ones Fred uses.", True)
+i10.questref = 111

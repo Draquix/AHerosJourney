@@ -1,11 +1,13 @@
 import items as it
 import characters as ch
+import monsters as mobs
 
 def drawBox(string):
     amt = len(string) + 4
     print("*" * amt)
     print("* " + string + " *")
     print("*" * amt)
+
 
 class Room:
     def __init__(self,name,description):
@@ -15,7 +17,6 @@ class Room:
         self.items = []
         self.npcs = []
         self.searchable = False
-        self.searchi = 0
 
     def add_exit(self,exit):
         self.exits.append(exit)
@@ -50,6 +51,11 @@ class Room:
             nav += "*Search*"
         print(nav)
 
+class Area(Room):
+    def makeArea(self, searchI, searchCount):
+        self.searchI = searchI
+        self.searchCount = 0
+        self.searchable = True
 
 class Exit:
     def __init__(self,dir,link,peek):
@@ -123,8 +129,9 @@ r8.add_npc(ch.npc2)
 r8e1 = Exit("North", 7, "Fred's Yard")
 r8.add_exit(r8e1)
 
-r9 = Room("Raiken Woods - Outskirts", "This thick copse of oak trees is home to many forms of wildlife. It is a favorite spot for hunters, as rabbits and deer are plentiful here. Lately a pack of dangerous coyotes have moved in, hassling both the game and the hunters. You can search around if you wish to encounter anything.")
+r9 = Area("Raiken Woods - Outskirts", "This thick copse of oak trees is home to many forms of wildlife. It is a favorite spot for hunters, as rabbits and deer are plentiful here. Lately a pack of dangerous coyotes have moved in, hassling both the game and the hunters. You can search around if you wish to encounter anything.")
 r9e1 = Exit("West", 6, "Main Street")
 r9.add_exit(r9e1)
+r9.searchI = 1
+r9.searchCount = 0
 r9.searchable = True
-r9.searchi = 1

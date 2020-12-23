@@ -9,7 +9,8 @@ class NPC:
         self.dialogue = ""
         self.reward = []
         self.questref = 0
-        self.questamt = 0
+        self.questamt = 1
+        self.hostile = False
 
     def add_item(self, item):
         self.reward.append(item)
@@ -19,6 +20,8 @@ class NPC:
 
     def lookAt(self):
         print(self.desc)
+        if self.hostile == True:
+            print("The enemy's hitpoints are at: "+self.hp)
 
     def onQuest(self):
         if self.questdone == False:
