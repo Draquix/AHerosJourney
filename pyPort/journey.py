@@ -97,37 +97,58 @@ class World:
         self.people[0].inventory.pop(ind)
 
     # item use method
-    def use(self,item):
+    def use(self,item, ind):
         #use of key
-        if self.people[0].inventory[item].iskey == True:
+        if item.iskey == True:
             i = 0
             while i < len(self.rooms[self.index].items):
-                if self.people[0].inventory[item].locki == self.rooms[self.index].items[item].locki:
-                    if self.rooms[self.index].items[item].isopen == False:
-                        self.rooms[self.index].items[item].isopen = True
-                        print("You turn the key and unlock it.")
-                        self.realign()
-                    else:
-                        print("It's already unlocked.")
-                        self.realign()
+                if item.locki == self.rooms[self.index].items[i].locki:
+                    while len(self.rooms[self.index].items[i].contains) > 0:
+                        msg ="You use the "+item.name+" and the contents are available to take."
+                        self.rooms[self.index].add_item(self.rooms[self.index].items[i].contains[0])
+                        self.rooms[self.index].items[i].contains.pop(0)  
                 i += 1
+            print(msg)
             self.realign()
+                    
         #using consumable 
-        if self.people[0].inventory[item].consumable == True:
-            heal = random.randint(self.people[0].inventory[item].lowH, self.people[0].inventory[item].highH)
-            print("You eat the "+self.people[0].inventory[item].ident+" and gain back "+str(heal)+" health points.")
+        if item.consumable == True:
+            heal = random.randint(item.lowH, item.highH)
+            print("You eat the "+item.ident+" and gain back "+str(heal)+" health points.")
             self.people[0].hp += heal
             if self.people[0].hp > self.people[0].maxHp:
                 self.people[0].hp = self.people[0].maxHp
-            self.people[0].inventory.pop(item)
+            self.people[0].inventory.pop(ind)
             self.realign()
         # trying to 'use' armor, weapon, or accessory
-        if self.people[0].inventory[item].equipSlot == 1:
+        if item.equipSlot == 1:
             print("You can't exactly 'use' armor, perhaps 'wear' it?")
             self.realign()
-        if self.people[0].inventory[item].equipSlot == 2:
+        if item.equipSlot == 2:
             print("Rather than try to 'use' a weapon, you must 'wield' it...")
             self.realign()
+        #using a quest item
+        if item.questref > 0:
+            if len(self.rooms[self.index].npcs) > 0:
+                if item.questref == self.rooms[self.index].npcs[0].questref:
+                    print("!!!Made into the If") 
+                    msg = "You give the "+item.name+" to "
+                    msg += self.rooms[self.index].npcs[0].name+", and in exchange they give you the "+self.rooms[self.index].npcs[0].reward[0].name+"." 
+                    self.people[0].add_toInventory(self.rooms[self.index].npcs[0].reward[0])
+                    self.rooms[self.index].npcs[0].reward.pop(0)
+                    self.rooms[self.index].npcs[0].questdone = True
+                    print(msg)
+                    self.realign()
+                else:
+                    print("This item is used in a different quest...")
+                    self.realign()
+            else:
+                print("There's no one here that needs that item.")
+                self.realign()
+        else:
+            print("This is not a quest item.")
+            self.realign()
+        
 # wear armor
     def wear(self, item):
         if len(self.people[0].armorSlot) == 0:
@@ -226,7 +247,9 @@ class World:
             i = 0
             while i < len(self.people[0].inventory):
                 if tag[1] in self.people[0].inventory[i].ident:
-                    self.use(i)
+                    #self.people[0].inventory.insert(0, self.people[0].inventory.pop(i))
+                    print("about to go use: "+self.people[0].inventory[i].name)
+                    self.use(self.people[0].inventory[i],i)
                     self.realign()
                 i += 1
         # 'wear' command
@@ -246,17 +269,6 @@ class World:
                 if tag[1] in self.people[0].inventory[i].ident:
                     self.wield(i)
                     self.realign()
-                i += 1
-        # 'loot' command
-        if "loot" in cmd.split():
-            i = 0
-            while i < len(self.rooms[self.index].items):
-                if self.rooms[self.index].items[i].isopen == True:
-                    x = 0
-                    while len(self.rooms[self.index].items[i].contains) > 0:
-                        self.rooms[self.index].add_item(self.rooms[self.index].items[i].contains[0])
-                        self.rooms[self.index].items[x].contains.pop(0)
-                        self.realign()
                 i += 1
         # 'look' command
         if cmd == "look":
@@ -328,6 +340,10 @@ class World:
             i = 0
             while i < len(self.rooms[self.index].npcs):
                 if tag[1] in self.rooms[self.index].npcs[i].name.lower():
+                    x = 0
+                    while x < len(self.people[0].inventory):
+                        if self.people[0].inventory[x].questref == self.rooms[self.index].npcs[i].questref:
+                            self.use(self.people[0].inventory[x] , x)
                     self.rooms[self.index].npcs[i].onQuest()
                     self.realign()
                 i += 1

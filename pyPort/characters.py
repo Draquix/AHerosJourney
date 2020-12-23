@@ -1,3 +1,5 @@
+import items as it
+
 class NPC:
     def __init__(self, name, desc):
         self.name = name
@@ -5,8 +7,12 @@ class NPC:
         self.questdone = False
         self.questdesc = ""
         self.dialogue = ""
+        self.reward = []
         self.questref = 0
         self.questamt = 0
+
+    def add_item(self, item):
+        self.reward.append(item)
 
     def talkTo(self):
         print(self.dialogue)
@@ -25,6 +31,7 @@ npc1.questdesc = "She bleats plaintively... she probably wants to be milked- if 
 npc1.dialogue = "Bleat, bleat!"
 npc1.questref = 42
 npc1.questamt = 1
+npc1.add_item(it.i9)
 
 npc2 = NPC("Fred", "Fred wears dark brown leathers, and a green cloak. He has red hair and a big bushy beard.")
 npc2.questdesc = "I need some arrows... find me four, and I'll give you some deer jerky."

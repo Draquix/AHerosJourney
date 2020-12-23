@@ -50,6 +50,9 @@ i4.add_contents(i2)
 i4.add_contents(i3)
 
 i5 = Item("vegetables", "Fresh Vegetables", "There's two carrots, a zucchini, and a potato... with some meat and milk it'd make a good stew.",True) 
+i5.consumable = True
+i5.lowH = 4
+i5.highH = 7
 
 i6 = Item("garden", "Your Vegetable Garden", "You grow potatos, zucchini, carrots, and brocolli. All sorts of healthy peasant food.", False)
 i6.locki = 666
@@ -61,3 +64,8 @@ i7.locki = 666
 
 i8 = Item("pail", "Milk Pail", "A metal bucket you use for milking the goats.", True)
 i8.questref = 42
+
+i9 = Item("milk", "Goat's Milk", "Nice and fresh, still a bit warm. Yummy goat's milk- you grew up on this stuff, it's a staple for you.", True)
+i9.consumable = True
+i9.lowH = 5
+i9.highH = 8
