@@ -182,7 +182,27 @@ class World:
                 print("That's not a weapon, so you can't very well wield it.")
         else:
             print("You already have a weapon wielded. You should 'disarm' it before wielding another.")
-
+    def purchase(self, numby):
+        yours = self.people[0].coins
+        theirs = self.rooms[self.index].npcs[0].prices[numby-1]
+        if yours >= theirs:
+            #Healing from Father Brennan Here
+            if self.rooms[self.index].npcs[0].priest == True:
+                self.people[0].coins -= theirs
+                if numby == 1:
+                    heal = random.randint(4,8)
+                    print("You were healed for "+str(heal)+" health points.")
+                    self.people[0].hp += heal
+                if numby == 2:
+                    heal = random.randint(8,14)
+                    print("You were healed for "+str(heal)+" health points.")
+                    self.people[0].hp += heal
+                if numby == 3:
+                    print("You are fully healed.")
+                    self.people[0].hp = self.people[0].maxHp
+                if self.people[0].hp > self.people[0].maxHp:
+                    self.people[0].hp = self.people[0].maxHp
+            # Buying objects fromm store's inventory
     def parser(self):
         cmd = input("What will you do?")
         cmd = cmd.lower()
@@ -336,7 +356,10 @@ class World:
                 i += 1
         # 'quest' command
         if cmd == "quest":
-            print("Quest who? Be more specific and name the NPC.")
+            if self.rooms[self.index].npcs[0].name == "Father Brennan" and skeleCount > 3 and self.rooms[self.index].npcs[0].questdone== False:
+                self.rooms[self.index].npcs[0].questdone = True
+                self.people[0].add_toInventory(self.rooms[self.index].npcs[0].reward[0])
+                self.rooms[self.index].npcs[0].reward.pop(0)
             self.realign()
         if "quest" in cmd.split():
             tag = cmd.split("quest ")
@@ -346,6 +369,25 @@ class World:
                     self.rooms[self.index].npcs[0].onQuest()
                     self.realign()
             i += 1
+        # shop commands
+        if cmd == "list":
+            if self.rooms[self.index].npcs[0].name == "Father Brennan":
+                i = 0
+                while i < len(self.rooms[self.index].npcs[0].wares):
+                    print(str(i+1)+self.rooms[self.index].npcs[0].wares[i]+" - "+str(self.rooms[self.index].npcs[0].prices[i])+" coins")
+                    i += 1
+            else:
+            
+                i = 0
+                while i < len(self.rooms[self.index].npcs[0].wares):
+                    print(str(i+1)+self.rooms[self.index].npcs[0].wares[i].name+" - "+str(self.rooms[self.index].npcs[0].prices[i])+" coins")
+                    i += 1
+            self.realign()
+        if "buy" in cmd.split():
+            tag = cmd.split("buy")
+            numby = int(tag[1])
+            self.purchase(numby)
+            self.realign()
         # 'search command
         if cmd == "search":
             if self.rooms[self.index].searchable == True:
@@ -409,6 +451,7 @@ class World:
         print(msg)
         if self.people[0].xp >= self.people[0].tNL:
             self.people[0].tNL = self.people[0].tNL*2.6
+            self.people[0].maxHp = self.people[0].maxHp * 1.4
             self.people[0].lvl += 1
             self.people[0].dexterity += 1
             self.people[0].strength += 1
@@ -419,15 +462,30 @@ class World:
 
     def mobRefresh(self,name):
         if name == "Coyote":
+            r.r13.coyoteCount += 1
             mobs.coyote.hp = 9
         if name == "Jackalope":
             mobs.jack.hp = 7
+        if name == "Badger":
+            mobs.badger.hp = 8
+        if name == "Forest Imp":
+            mobs.frimp.hp = 12
+        if name == "Cougar":
+            mobs.cougar.hp = 10
+        if name == "Bandit":
+            mobs.bandit.hp = 12
+        if name == "Giant Spider":
+            mobs.spider.hp = 11
+        if name == "Skeleton":
+            mobs.skeleton.hp = 14
+            r14.skeleCount +=1
+
 #Searching area event handlers...
     def goSearch(self, searchI):
         #search possibilities for Raiken Woods
         if searchI == 1:
-            enc = random.randint(1,5)
-            self.rooms[self.index].searchCount += 1
+            enc = random.randint(1,6)
+            r.woodSearch()
             if enc == 1:
                 fate = random.randint(1,3)
                 print("You look about in the forest, searching for anything useful, or anything dangerous. You stumble and trip on a root...")
@@ -448,8 +506,45 @@ class World:
             if enc == 5:
                 print("A forest faery flits by on gossamer wings, and taps you on the shoulder, imbuing you with a little more health.")
                 self.people[0].hp += 1
+            if enc == 6:
+                print("While poking around in the underbrush you expose the den of a badger, which takes offense and hisses menacingly.")
+                self.rooms[self.index].add_npc(mobs.badger)
+        ##Deeper Raiken woods search
+        if searchI == 2:
+            enc = random.randint(1,6)
+            if enc == 1:
+                print("A mangy, hungry looking coyote slinks closer and growls at you.")
+                self.rooms[self.index].add_npc(mobs.coyote)
+            if enc == 2:
+                print("A wandering forest imp comes charging around a tree, it's green scaly skin glistening.")
+                self.rooms[self.index].add_npc(mobs.frimp)
+            if enc == 3:
+                print("A bird catches your eye as you walk right into a tree...")
+            if enc == 4:
+                print("A lean cougar is poised on a tree limb and about ready to pounce!")
+                self.rooms[self.index].add_npc(mobs.cougar)
+            if enc == 5:
+                print("You come across a campsite where a single man was sitting by the fire, but now is drawing his knife.")
+                self.rooms[self.index].add_npc(mobs.bandit)
+            if enc == 6:
+                print("Under a mossy log you find a spotted red-cap mushroom, these are rare and powerful to the mystics, so you may want to pick it.")
+                self.rooms[self.index].add_item(it.i15)
+        #Chapel Catacombs Searching
+        if searchI == 3:
+            enc = random.randint(1,4)
+            if enc == 1:
+                print("Something glitters on the ground as it catches your torchlight... it's a coin, and it's head's up- your lucky day")
+                self.people[0].coins += 1
+            if enc == 2:
+                print("You hear a scraping shuffle of something moving but it's beyond the range of your light.")
+            if enc == 3:
+                print("A gian spider crawls down the wall from the corner it was waiting in and jumps your way!")
+                self.rooms[self.index].add_npc(mobs.spider)
+            if enc == 4:
+                print("An animated skeleton shuffles into view. It doesn't seem to know it's dead...")
+                self.rooms[self.index].add_npc(mobs.skeleton)
         self.realign()
-   
+    
 playerName = input("What is your name?:")
 You = Player()
 You.name = playerName
@@ -465,6 +560,11 @@ Game.add_room(r.r6)
 Game.add_room(r.r7)
 Game.add_room(r.r8)
 Game.add_room(r.r9)
+Game.add_room(r.r10)
+Game.add_room(r.r11)
+Game.add_room(r.r12)
+Game.add_room(r.r13)
+Game.add_room(r.r14)
 Game.index = 0
 Game.rooms[Game.index].describe()
 Game.parser()

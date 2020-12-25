@@ -41,6 +41,8 @@ class Room:
             i = 0
             while i < len(self.npcs):
                 print(self.npcs[i].name+" stands here.")
+                if self.npcs[i].shop == True:
+                    print(self.npcs[i].salespitch+"   (Type 'list')")
                 i += 1
         nav ="Exits: "
         i = 0
@@ -56,6 +58,7 @@ class Area(Room):
         self.searchI = searchI
         self.searchCount = 0
         self.searchable = True
+
 
 class Exit:
     def __init__(self,dir,link,peek):
@@ -131,7 +134,47 @@ r8.add_exit(r8e1)
 
 r9 = Area("Raiken Woods - Outskirts", "This thick copse of oak trees is home to many forms of wildlife. It is a favorite spot for hunters, as rabbits and deer are plentiful here. Lately a pack of dangerous coyotes have moved in, hassling both the game and the hunters. You can search around if you wish to encounter anything.")
 r9e1 = Exit("West", 6, "Main Street")
+r9e2 = Exit("*Deeper in to the East", 13, "Deeper Raiken")
+def woodSearch():
+        r9.searchCount += 1
+        if r9.searchCount > 12:
+            r9.add_exit(r9e2)
+
 r9.add_exit(r9e1)
 r9.searchI = 1
 r9.searchCount = 0
 r9.searchable = True
+
+r10 = Room("The Main Street - Nearing Town Square", "A villager walks past going east towards the edge of town, where the woods are. To the north is a quaint chapel. To the south is the baker's store. Your house is further to the east and the town's square is to the west.") 
+r10e1 = Exit("North", 11, "Chapel")
+r10e2 = Exit("West", 15, "Town Square")
+r10e3 = Exit("East", 6, "Main Street")
+r10e4 = Exit("South", 12, "Bakery")
+r10.add_exit(r10e1)
+r10.add_exit(r10e2)
+r10.add_exit(r10e3)
+r10.add_exit(r10e4)
+
+
+r11 = Room("The Chapel of Jezran", "A roow of benches for the congretion to sit and listen to sermons fills the southern part of the room. The alter to Jezran, goddess of healing, takes up space in the north end of the room. Many come here to pray or be healed of their injuries.")
+r11e1 = Exit("South", 10, "Main Street")
+r11e2 = Exit("Down", 14, "Catacombs")
+r11.add_exit(r11e1)
+r11.add_exit(r11e2)
+r11.add_npc(ch.npc3)
+
+r12 = Room("The Bakery", "The smell of baking bread is ever present here. A counter divides the room in half and an oven dominates the southern wall. A display of bread is sitting on the counter.")
+r12e1 = Exit("North", 10, "Main Street")
+r12.add_exit(r12e1)
+r12.add_npc(ch.npc4)
+
+r13 = Area("Deeper In The Woods", "Further into Raiken woods in an easterly direction the trees are closer together here, the paths are less defined or worn down, the underbrish is much thicker. You can hear birds chirping and a squirrel chattering away... but also you feel the ominous feeling of unseen eyes upon you.")
+r13e1 = Exit("West", 9, "Raiken Outskirts")
+r13.add_exit(r13e1)
+r13.searchI = 2
+r13.coyoteCount = 0
+
+r14 = Area("The Catacombs", "The wealthier folks don't get buried in the ground in a cemetary, no those in financial favor with the church can spend the rest of eternity on hallowed ground. So there's expansive rooms of tombs under the chapel. It's too bad the dead don't stay put.")
+r14e1 = Exit("Up", 11, "Chapel")
+r14.skeleCount = 0
+

@@ -77,3 +77,29 @@ i11 = Item("jerky","Deer Jerky", "This aged and dried meat has a smokey flavor a
 i11.consumable = True
 i11.lowH = 7
 i11.highH = 12
+
+i12 = Item("amulet", "Amulet of Jezran", "Hanging on a silver chord, the pupleish disc depicts two outstretched hands.", True)
+i12.specref = 1
+i12.equipSlot = 3 
+
+i13 = Item("bun", "Hot Bun", "A flaky, fresh baked bun it's about the size of a third of a loaf and would help restore between 5 and 9 hp.", True)
+i13.consumable = True
+i13.lowH = 5
+i13.highH = 9
+i13b = Item("bun", "Hot Bun", "A flaky, fresh baked bun it's about the size of a third of a loaf and would help restore between 5 and 9 hp.", True)
+i13b.consumable = True
+i13b.lowH = 5
+i13b.highH = 9
+
+i14 = Item("bread", "Loaf of Bread", "This fluffy bread is plenty big to be a full meal.  It smells freshly baked. It restores between 9 and 15 health.", True)
+i14.consumable = True
+i14.lowH = 9
+i14.highH = 15
+i14b = Item("bread", "Loaf of Bread", "This fluffy bread is plenty big to be a full meal.  It smells freshly baked. It restores between 9 and 15 health.", True)
+i14b.consumable = True
+i14b.lowH = 9
+i14b.highH = 15
+
+i15 = Item("mushroom", "Spotted Red-Cap Shroom", "It's on a stalk the length of your hand with a big saucer shaped cap that has the iconic red with white spotted warts. It has value to some.", True)
+i15.questref = 123
+
